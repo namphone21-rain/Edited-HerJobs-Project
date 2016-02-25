@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Her jobs!</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:400,700,600italic,700italic' rel='stylesheet' type='text/css'>
+    
+   </head>
+    <body bgcolor="#A3C4FF">
+
+    
+
+      <style>
+      html, body{width:100%; height:100%;}
+        
+      #description {
+        display: inline-block;
+        height: 100%;
+        width: 20%;
+        background-color: antiquewhite;
+       font-family: 'Josefin Slab', serif;
+       font-size: 20px;
+       padding-left:20px;
+      }
+   
+     #map-canvas {
+        height: 100%;
+        display: inline-block;
+        width: 75%;
+        margin: 0px;
+        padding: 0px;
+      }
+    </style>
+    
+        
+     <div id="description">
+       <table height="100%">
+         <tr>
+           <td>
+             <p> <b>View company ratings: From Women to Women! </b>
+               <br>
+               <br>
+               We provide you a helpful vizualization map that displays ratings of women-friendly tech-companies based
+               on <a href="www.inhersight.com">InHerSight</a>. We aim to encourage companies to encourage the support
+               for women in tech. Last Update was 2/24//2016.
+               <br>
+			   
+               <br>
+               See for yourself!
+             
+             <p style="font-size:15px"> Rating Scale:
+             <br>
+             3.5 <= Friendly <=5
+             <br>
+             2.5 <= Almost Friendly < 3.5
+             <br>
+             0 <= Not Friendly < 2.5
+             </p>
+         
+             </p>
+           </td>
+           </tr>
+           
+           <tr>
+           <td>
+             
+Friendly: <input type="checkbox" class="super" checked/> 
+<br>
+Almost Friendly:<input type="checkbox" class="friendly" checked/>
+<br>
+Not Friendly:<input type="checkbox" class="almost-friendly" checked/>
+<br>
+<button onclick="displayResult()">Display</button> <br><br>
+
+<a href="https://twitter.com/pearlhacks"> About PearlHacks </a>
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+
+<script>
+var superCheckBox = $(".super").prop('checked');
+var friendlyCheckBox = $(".friendly").prop('checked');
+var almostFriendlyCheckBox = $(".almost-friendly").prop('checked');
+
+function displayResult() {
+	 superCheckBox = $(".super").prop('checked');
+	 friendlyCheckBox = $(".friendly").prop('checked');
+	 almostFriendlyCheckBox = $(".almost-friendly").prop('checked');
+	 initialize();
+	 
+}
+</script>
+<br>
+           </td>
+         </tr>
+        
+         <tr>
+           <td>
+           <img src="http://www.gohgai.com/images/pearlhacks2015.jpg" width="40%" height="30%">
+           </td>
+         </tr>
+         
+       </table>
+       
+    </div>
+    <div id="map-canvas"></div>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>		
+    <script>
+
+		//click info window
+		var info = new google.maps.InfoWindow();
+		
+		function infoWindow(stringContent) {
+		  info = new google.maps.InfoWindow({
+			content: stringContent,
+			maxWidth: 200
+		  });
+		  
+		  return info;
+		};
+    	
+		//initialize map! 
+		function initialize() {
+			
+			var mapOptions = {
+				zoom: 4,
+				center: new google.maps.LatLng(38.8794, -99.3222)
+			};
+			
+			var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+			//content string
+			function contentString(name, rating, link) {
+				 return '<div id="content">'+
+			  '<div id="siteNotice">'+
+			  '</div>'+
+			  '<h1 id="firstHeading" class="firstHeading">'+name+'</h1>'+
+			  '<div id="bodyContent">'+
+			  'Rating: <h2> '+rating+'</h2> '+
+			  '<p>More Information: <a href="'+link+'">Click here</a> </p>'+
+			  '</div>'+
+			  '</div>';
+			};			
+			
+			//click to zoom
+			function clickZoom(pin) {
+				 google.maps.event.addListener(pin, 'click', function() {
+				  map.setZoom(map.getZoom() + 2);
+				});
+			}			
+			
+			function mark(xy, pinImageMarker, company_name, company_score, companyURL ){
+				
+				var marker = new google.maps.Marker({
+					position: xy,
+					map: map,
+					icon: pinImageMarker,
+					title: company_name
+				});
+							  
+				google.maps.event.addListener(marker, 'click', function() {
+					info.close();
+					info = infoWindow(contentString(company_name, company_score, companyURL));
+					info.open(map, marker);
+				});
+							
+				clickZoom(marker);
+			}
+			  
+			// read file http://www.html5rocks.com/en/tutorials/file/dndfiles/
+				
+			// Check for the various File API support.
+			if (window.File && window.FileReader && window.FileList && window.Blob) {
+			  //window.alert('The file APIs are fully supported.');
+			} else {
+			  alert('The File APIs are not fully supported in this browser.');
+			}
+			
+			//http://stackoverflow.com/questions/14446447/javascript-read-local-text-file
+			function readTextFile(file)
+			{
+				var inhersite_url = "http://www.inhersite.com";
+				var rawFile = new XMLHttpRequest();
+				rawFile.open("GET", file, false);
+				rawFile.onreadystatechange = function ()
+				{
+					if(rawFile.readyState === 4)
+					{
+						if(rawFile.status === 200 || rawFile.status == 0)
+						{
+							var allText = rawFile.responseText;
+							
+							var lines = allText.split('\n');
+							
+							for(var i = 1; i < lines.length; i++)
+							{
+							  var line = lines[i].split(',');
+							  if( line.length == 5 )
+							  {
+								  var company_name = line[0]; 
+								  var company_subURL = line[1];
+								  var companyURL = inhersite_url.concat(company_subURL);
+								  var company_scoreStr = line[2];
+								  var company_scoreNUM = Number(company_scoreStr);
+								  var xy = new google.maps.LatLng( Number(line[3]), Number(line[4]) );
+								
+								  if (company_scoreNUM >= 0 && company_scoreNUM < 2.5 && almostFriendlyCheckBox ) {
+										 var pinImageMarker = new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/FF0000/");
+										 mark(xy, pinImageMarker, company_name, company_scoreStr, companyURL );
+								  }
+								  
+								  if (company_scoreNUM >= 2.5 && company_scoreNUM < 3.5 && friendlyCheckBox) {
+										var pinImageMarker = new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/FFFF00/");
+										mark(xy, pinImageMarker, company_name, company_scoreStr, companyURL );	
+								  }
+								  
+								  if (company_scoreNUM > 3.5 && superCheckBox ) {
+										var pinImageMarker = new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/97BF42/");	
+										mark(xy, pinImageMarker, company_name, company_scoreStr, companyURL );	
+								 }
+							  }
+							}						
+						}
+					}
+				}
+				rawFile.send(null);
+			}
+			readTextFile('InHerSight1.csv');
+		}
+		google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+</html>
