@@ -1,6 +1,5 @@
-# Edited-HerJobs-Project
-The purpose of editing HerJobs project is to use a better or more efficient code that 
-the web application can read more data from a CSV file to produce markers on 
-Google Map. 
+•	Uses Google Maps to display the rating of female friendly tech-companies
+•	Developed at Pearl Hacks camp in March 2015 (http://pearlhacks.com)
+•	Used Github, Google Maps API, HTML, CSS and JavaScript
+•	View this application at www.gohgai.com/herjobs.php and the edited code at https://github.com/namphone21-rain/Edited-HerJobs-Project
 
-View the website at http://www.gohgai.com/herjobsEditedVersion.php
